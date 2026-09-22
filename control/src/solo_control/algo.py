@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from typing import Any
 
 from backtest import Algo, DosVar, OrderReport, TradeReport
 from scheme import ResearchContext
@@ -8,7 +9,7 @@ from .params import ControlParams
 __all__ = ["ControlAlgo"]
 
 
-class ControlAlgo[C: ResearchContext](Algo[ControlParams, C]):
+class ControlAlgo[C: ResearchContext[Any]](Algo[ControlParams, C]):
     def initialize(self) -> None:
         pass
 

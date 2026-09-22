@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from typing import Any
 
 from backtest import Algo, DosVar, OrderReport, TradeReport
 from scheme import ResearchContext
@@ -8,7 +9,7 @@ from .params import ExecutionParams
 __all__ = ["ExecutionAlgo"]
 
 
-class ExecutionAlgo[C: ResearchContext](Algo[ExecutionParams, C]):
+class ExecutionAlgo[C: ResearchContext[Any]](Algo[ExecutionParams, C]):
     def initialize(self) -> None:
         pass
 
