@@ -1,0 +1,3 @@
+[submodule "scheme"]
+	path = scheme
+	url = https://github.com/Genesis-Quant/solo-algo-scheme.git
