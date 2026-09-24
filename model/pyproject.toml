@@ -1,12 +1,11 @@
 [project]
 name = "solo-model"
-version = "0.1.0"
+version = "1.0.0"
 description = "Solo model project template."
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.13"
 dependencies = [
-    "scheme @ git+https://github.com/Genesis-Quant/solo-algo-scheme@82d94e21c0cfeca0794b3669b1aa1e50958dc50c",
+    "scheme>=1.0.0,<2.0.0",
     "pydantic>=2,<3",
-    "backtest @ git+https://github.com/Genesis-Quant/backtest@d6ea13caec7f049ac32b715486636f38fccfab79",
 ]
 
 [build-system]

@@ -1,15 +1,21 @@
+from abc import abstractmethod
 from collections.abc import Sequence
 from typing import Any
 
-from backtest import Algo, DosVar, OrderReport, TradeReport
-from scheme import ResearchContext
+from scheme import ControlAlgo as BaseControlAlgo
+from scheme import DosVar, OrderReport, ResearchContext, Target, TradeReport
 
 from .params import ControlParams
 
 __all__ = ["ControlAlgo"]
 
 
-class ControlAlgo[C: ResearchContext[Any]](Algo[ControlParams, C]):
+class ControlAlgo[C: ResearchContext[Any]](BaseControlAlgo[ControlParams, C]):
+    @abstractmethod
+    def on_target(self, target: Target) -> None:
+        """根据目标权重生成并检查订单，写入 ctx.orders；上游消息已清空。"""
+        ...
+
     def initialize(self) -> None:
         pass
 

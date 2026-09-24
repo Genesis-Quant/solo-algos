@@ -1,15 +1,15 @@
 from collections.abc import Sequence
 from typing import Any
 
-from backtest import Algo, DosVar, OrderReport, TradeReport
-from scheme import ResearchContext
+from scheme import DosVar, OrderReport, ResearchContext, TradeReport
+from scheme import ModelAlgo as BaseModelAlgo
 
 from .params import ModelParams
 
 __all__ = ["ModelAlgo"]
 
 
-class ModelAlgo[C: ResearchContext[Any]](Algo[ModelParams, C]):
+class ModelAlgo[C: ResearchContext[Any]](BaseModelAlgo[ModelParams, C]):
     def initialize(self) -> None:
         pass
 

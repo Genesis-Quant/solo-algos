@@ -1,15 +1,21 @@
+from abc import abstractmethod
 from collections.abc import Sequence
 from typing import Any
 
-from backtest import Algo, DosVar, OrderReport, TradeReport
-from scheme import ResearchContext
+from scheme import DosVar, Order, OrderReport, ResearchContext, TradeReport
+from scheme import ExecutionAlgo as BaseExecutionAlgo
 
 from .params import ExecutionParams
 
 __all__ = ["ExecutionAlgo"]
 
 
-class ExecutionAlgo[C: ResearchContext[Any]](Algo[ExecutionParams, C]):
+class ExecutionAlgo[C: ResearchContext[Any]](BaseExecutionAlgo[ExecutionParams, C]):
+    @abstractmethod
+    def on_orders(self, orders: list[Order]) -> None:
+        """拆单后调用 backtest.submit_order；上游消息已由基类清空。"""
+        ...
+
     def initialize(self) -> None:
         pass
 
