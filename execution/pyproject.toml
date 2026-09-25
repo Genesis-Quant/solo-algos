@@ -1,5 +1,5 @@
 [project]
-name = "solo-execution"
+name = "execution"
 version = "1.0.0"
 description = "Solo execution project template."
 requires-python = ">=3.12,<3.13"
