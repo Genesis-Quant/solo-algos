@@ -1,8 +1,9 @@
-from pydantic import BaseModel
 from scheme.base import OptimizeReportForm as BaseOptimizeReportForm
+
+from .params import OptimizeParams
 
 __all__ = ["OptimizeReportForm"]
 
 
-class OptimizeReportForm[P: BaseModel](BaseOptimizeReportForm[P]):
-    """当前项目的研究参数表单，可增加算法字段或覆盖默认值。"""
+class OptimizeReportForm(OptimizeParams, BaseOptimizeReportForm):
+    """复用算法参数，附加 Scheme 的研究表单设置。"""

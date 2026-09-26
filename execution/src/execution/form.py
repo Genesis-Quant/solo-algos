@@ -1,8 +1,9 @@
-from pydantic import BaseModel
 from scheme.base import ExecutionReportForm as BaseExecutionReportForm
+
+from .params import ExecutionParams
 
 __all__ = ["ExecutionReportForm"]
 
 
-class ExecutionReportForm[P: BaseModel](BaseExecutionReportForm[P]):
-    """当前项目的研究参数表单，可增加算法字段或覆盖默认值。"""
+class ExecutionReportForm(ExecutionParams, BaseExecutionReportForm):
+    """复用算法参数，附加 Scheme 的研究表单设置。"""

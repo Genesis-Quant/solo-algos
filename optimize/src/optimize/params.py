@@ -1,7 +1,8 @@
+from pydantic import Field
 from scheme.base import OptimizeParams as BaseOptimizeParams
 
 __all__ = ["OptimizeParams"]
 
 
 class OptimizeParams(BaseOptimizeParams):
-    """在此定义当前算法使用的参数字段。"""
+    gross_exposure: float = Field(default=0.98, gt=0, le=1, title="总仓位")
