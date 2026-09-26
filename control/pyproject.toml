@@ -1,6 +1,6 @@
 [project]
 name = "control"
-version = "1.0.0"
+version = "1.0.1"
 description = "Solo control project template."
 requires-python = ">=3.12,<3.13"
 dependencies = [
