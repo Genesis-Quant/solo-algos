@@ -1,10 +1,12 @@
 from datetime import date, timedelta
 
 import pandas as pd
-from scheme import Factor as BaseFactor
-from scheme import FactorParams
 from scheme.data import query
 from scheme.data.dolphindb.symbols import engine_symbol
+
+from scheme import Factor as BaseFactor
+
+from .params import FactorParams
 
 __all__ = ["Factor"]
 

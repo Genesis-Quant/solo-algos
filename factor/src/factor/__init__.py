@@ -1,4 +1,4 @@
 from .factor import Factor
-from .params import FactorReportForm
+from .params import FactorAnalysisParams, FactorParams, FactorReportForm
 
-__all__ = ["Factor", "FactorReportForm"]
+__all__ = ["Factor", "FactorAnalysisParams", "FactorParams", "FactorReportForm"]
