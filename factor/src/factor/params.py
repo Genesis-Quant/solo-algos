@@ -24,11 +24,11 @@ class FactorAnalysisParams(FactorParams, BaseFactorAnalysisParams):
 class FactorReportForm(ReportForm[FactorAnalysisParams]):
     """当前因子项目的报告表单；build 显式构造本项目分析参数。"""
 
-    start: date = Field(title="开始日期")
-    end: date = Field(title="结束日期（不含）")
+    start: date = Field(default=date(2020, 1, 1), title="开始日期")
+    end: date = Field(default=date(2027, 1, 1), title="结束日期（不含）")
     pool: Literal[
         StockPool.ALL, StockPool.SSE50, StockPool.CSI300, StockPool.CSI500, StockPool.CSI1000
-    ] = Field(default=StockPool.ALL, title="股票池")
+    ] = Field(default=StockPool.CSI300, title="股票池")
     lookback: timedelta = Field(default=timedelta(0), title="回溯周期")
     columns: list[str] = Field(
         default_factory=lambda: ["momentum"], min_length=1, title="因子列"
@@ -37,9 +37,9 @@ class FactorReportForm(ReportForm[FactorAnalysisParams]):
         default_factory=lambda: [1, 5, 20], min_length=1, title="收益持有期"
     )
     groups: int = Field(default=5, ge=2, title="分组数量")
-    n_select: int = Field(default=2, ge=1, title="极端股票数")
+    n_select: int = Field(default=10, ge=1, title="极端股票数")
     weight: Literal["equal", "market_value"] = Field(
-        default="equal",
+        default="market_value",
         title="加权方式",
         json_schema_extra={"x-enum-labels": ["等权", "市值加权"]},
     )
