@@ -14,7 +14,7 @@ __all__ = ["ModelAlgo"]
 
 
 class ModelAlgo[C: ResearchContext[Any]](BaseModelAlgo[ModelParams, C]):
-    """示例：收盘后选择股票池内近 20 个交易日收益最高的股票。"""
+    """收盘后选择股票池内近 20 个交易日收益最高的股票。"""
 
     def initialize(self) -> None:
         self.last_rebalance = None
