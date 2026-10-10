@@ -29,7 +29,8 @@ def test_template_form_defaults_round_trip_through_parameter_api(monkeypatch, ki
     monkeypatch.setattr("scheme.execute.strategy.components.algo_options", lambda _: {})
     module = importlib.import_module(kind)
     form = getattr(module, f"{kind.title()}ReportForm")
-    assert form.__bases__[0].__pydantic_generic_metadata__["origin"] is ReportForm
+    assert issubclass(form, ReportForm)
+    assert form.analysis_model() is getattr(module, f"{kind.title()}AnalysisParams")
     initial = defaults(form)
     definition = inspect_project(directory)
     assert definition["values"]["form"] == initial
