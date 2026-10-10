@@ -107,11 +107,6 @@ PROJECT_SOURCE = dedent("""\
                 spec = deepcopy(analysis_base.model_fields[name])
                 spec.validation_alias = alias
                 fields[name] = (spec.annotation, spec)
-        for name, spec in analysis_base.model_fields.items():
-            if (spec.json_schema_extra or {}).get("x-algo-kind"):
-                spec = deepcopy(spec)
-                spec.validation_alias = "selected_" + name
-                fields[name] = (spec.annotation, spec)
         analysis = create_model(
             kind.title() + "Analysis", __base__=(runtime, analysis_base),
             __module__=__name__, **fields,
