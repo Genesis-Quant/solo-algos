@@ -1,13 +1,16 @@
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 from scheme import OptimizeAlgo as BaseOptimizeAlgo
 from scheme import ResearchContext, Signal
+
 from .params import OptimizeParams
 
 __all__ = ["OptimizeAlgo"]
 
+C = TypeVar("C", bound=ResearchContext[Any], infer_variance=True)
 
-class OptimizeAlgo[C: ResearchContext[Any]](BaseOptimizeAlgo[OptimizeParams, C]):
+
+class OptimizeAlgo(BaseOptimizeAlgo[OptimizeParams, C], Generic[C]):
     """按信号方向等权分配，保留现金。"""
 
     def on_signal(self, signals: Signal[Any]) -> None:

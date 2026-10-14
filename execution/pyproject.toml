@@ -1,10 +1,10 @@
 [project]
 name = "execution"
-version = "1.4.2"
+version = "1.5.0"
 description = "Solo execution project template."
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "scheme>=1.4.0,<1.5.0",
+    "scheme>=1.5.0,<1.6.0",
     "pydantic>=2,<3",
 ]
 

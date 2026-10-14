@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 from datetime import timedelta
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 import pandas as pd
 from scheme import DosVar, OrderReport, ResearchContext, TradeReport
@@ -12,8 +12,10 @@ from .params import ModelParams
 
 __all__ = ["ModelAlgo"]
 
+C = TypeVar("C", bound=ResearchContext[Any], infer_variance=True)
 
-class ModelAlgo[C: ResearchContext[Any]](BaseModelAlgo[ModelParams, C]):
+
+class ModelAlgo(BaseModelAlgo[ModelParams, C], Generic[C]):
     """收盘后选择股票池内近 20 个交易日收益最高的股票。"""
 
     def initialize(self) -> None:
