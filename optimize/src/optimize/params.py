@@ -6,7 +6,7 @@ __all__ = ["OptimizeAnalysisParams", "OptimizeParams"]
 
 
 class OptimizeParams(BaseOptimizeParams):
-    gross_exposure: float = Field(default=0.98, gt=0, le=1, title="总仓位")
+    gross_exposure: float = Field(default=0.98, ge=0, le=1, title="总仓位")
 
 
 class OptimizeAnalysisParams(OptimizeParams, BaseOptimizeAnalysisParams):
