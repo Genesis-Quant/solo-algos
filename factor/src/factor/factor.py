@@ -1,9 +1,9 @@
 from datetime import date, timedelta
+from typing import ClassVar
 
 import pandas as pd
-from scheme import DosVar
+from scheme import DosVar, Universe
 from scheme import Factor as BaseFactor
-from scheme import Universe
 
 from .params import FactorParams
 
@@ -12,6 +12,8 @@ __all__ = ["Factor"]
 
 class Factor(BaseFactor[FactorParams]):
     """计算固定 20 日动量，再按当日行业和流通市值预处理。"""
+
+    columns: ClassVar[list[str]] = ["momentum"]
 
     def compute(self, start: date, end: date) -> pd.DataFrame:
         if start > end:
@@ -46,8 +48,6 @@ class Factor(BaseFactor[FactorParams]):
         # 只保留当日成分股。
         with self.params.universe.query(
             start, end + timedelta(days=1), lookback=timedelta(days=110),
-            factors=["industry_l0", "circ_mv"], derivatives=derivatives, filters=[Universe.member],
+            derivatives=derivatives, filters=[Universe.member],
         ) as result:
-            return self.preprocess(
-                DosVar(result.data_ref), session=result.session, columns=["momentum"],
-            )
+            return self.preprocess(DosVar(result.data_ref), session=result.session)

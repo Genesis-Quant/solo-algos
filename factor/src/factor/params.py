@@ -1,4 +1,3 @@
-from pydantic import ConfigDict, Field
 from scheme.base import FactorAnalysisParams as BaseFactorAnalysisParams
 from scheme.base import FactorParams as BaseFactorParams
 from scheme.base import FactorReportForm as BaseFactorReportForm
@@ -11,13 +10,7 @@ class FactorParams(BaseFactorParams):
 
 
 class FactorAnalysisParams(FactorParams, BaseFactorAnalysisParams):
-    """当前因子的运行参数、分析设置与研究入口。"""
-
-    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
-
-    columns: list[str] = Field(
-        default_factory=lambda: ["momentum"], min_length=1, title="因子列"
-    )
+    """当前因子的运行参数、分析设置与研究入口；配置沿用基类。"""
 
 
 class FactorReportForm(BaseFactorReportForm[FactorAnalysisParams]):
