@@ -1,10 +1,10 @@
 [project]
 name = "optimize"
-version = "1.9.0"
+version = "1.10.0"
 description = "Solo optimize project template."
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "scheme>=1.9.0,<1.10.0",
+    "scheme>=1.10.0,<1.11.0",
     "pydantic>=2,<3",
 ]
 
