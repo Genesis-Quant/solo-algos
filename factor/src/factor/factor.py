@@ -1,8 +1,7 @@
 from datetime import date, timedelta
 
 import pandas as pd
-from scheme.data.dolphindb.symbols import engine_symbol
-
+from scheme import DosVar
 from scheme import Factor as BaseFactor
 from scheme import Universe
 
@@ -12,7 +11,7 @@ __all__ = ["Factor"]
 
 
 class Factor(BaseFactor[FactorParams]):
-    """使用复权收盘价计算固定 20 个交易日的动量因子。"""
+    """计算固定 20 日动量，再按当日行业和流通市值预处理。"""
 
     def compute(self, start: date, end: date) -> pd.DataFrame:
         if start > end:
@@ -46,11 +45,9 @@ class Factor(BaseFactor[FactorParams]):
         }
         # 只保留当日成分股。
         with self.params.universe.query(
-            start, end + timedelta(days=1), lookback=timedelta(days=110), derivatives=derivatives,
-            filters=[Universe.member],
+            start, end + timedelta(days=1), lookback=timedelta(days=110),
+            factors=["industry_l0", "circ_mv"], derivatives=derivatives, filters=[Universe.member],
         ) as result:
-            panel = result.data[["time", "code", "momentum"]].copy()
-        panel = panel.rename(columns={"time": "date", "code": "symbol"})
-        panel["date"] = pd.to_datetime(panel["date"])
-        panel["symbol"] = panel["symbol"].map(engine_symbol)
-        return panel.set_index(["date", "symbol"]).sort_index()
+            return self.preprocess(
+                DosVar(result.data_ref), session=result.session, columns=["momentum"],
+            )
