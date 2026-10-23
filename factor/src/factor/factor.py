@@ -2,8 +2,10 @@ from datetime import date, timedelta
 from typing import ClassVar
 
 import pandas as pd
-from scheme import DosVar, Universe
+from scheme import DosVar
 from scheme import Factor as BaseFactor
+from scheme.data import query
+from scheme.data.dolphindb.universe import MEMBERS
 
 from .params import FactorParams
 
@@ -45,9 +47,18 @@ class Factor(BaseFactor[FactorParams]):
                 },
             },
         }
-        # 只保留当日成分股。
-        with self.params.universe.query(
-            start, end + timedelta(days=1), lookback=timedelta(days=110),
-            derivatives=derivatives, filters=[Universe.member],
+        universe = self.params.universe
+        codes = universe.codes(start, end + timedelta(days=1))
+        if not codes:
+            raise ValueError("所选区间的股票池没有成员")
+        with query(
+            {
+                "start_date": start.isoformat(),
+                "end_date": end.isoformat(),
+                "lookback": timedelta(days=110),
+                "codes": codes,
+                "derivatives": {universe.member: MEMBERS[universe.pool], **derivatives},
+                "filters": [universe.member],
+            }
         ) as result:
             return self.preprocess(DosVar(result.data_ref), session=result.session)
