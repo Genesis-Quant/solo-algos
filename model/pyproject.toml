@@ -1,6 +1,6 @@
 [project]
 name = "model"
-version = "1.12.1"
+version = "1.12.2"
 description = "Solo model project template."
 requires-python = ">=3.12,<3.13"
 dependencies = [
