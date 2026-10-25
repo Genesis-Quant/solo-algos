@@ -31,15 +31,22 @@ class ModelAlgo(BaseModelAlgo[ModelParams, C], Generic[C]):
             # Arena 查询的空 codes 表示全市场；股票池当天没有成员（如指数发布前）时不选股。
             self.ctx.signal = {}
         else:
-            with query(
-                {
-                    "start_date": (now.date() - timedelta(days=60)).isoformat(),
-                    "end_date": now.date().isoformat(),
-                    "codes": [source_symbol(code) for code in codes],
-                    "factors": ["close", "adj_factor"],
-                }
-            ) as result:
-                data = result.data
+            start = now.date() - timedelta(days=60)
+            history = getattr(self.backtest, "history", None)
+            if history is not None:
+                data = history.query(start, now.date(), codes, include_today=True)
+            else:
+                with query(
+                    {
+                        "start_date": start.isoformat(),
+                        "end_date": now.date().isoformat(),
+                        "codes": [source_symbol(code) for code in codes],
+                        "factors": ["close", "adj_factor"],
+                    },
+                    session=self.backtest.session,
+                    settings=self.backtest.settings,
+                ) as result:
+                    data = result.data
             adjusted = data.assign(price=data.close * data.adj_factor)
             prices = adjusted.pivot(
                 index="time", columns="code", values="price"
