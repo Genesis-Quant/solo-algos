@@ -2,17 +2,17 @@ from datetime import time
 from typing import Any, Generic, TypeVar
 
 import pandas as pd
-from scheme import ExecutionAlgo as BaseExecutionAlgo
-from scheme import Order, ResearchContext
+from scheme import base
+from scheme.execute import Order
 
 from .params import ExecutionParams
 
 __all__ = ["ExecutionAlgo"]
 
-C = TypeVar("C", bound=ResearchContext[Any], infer_variance=True)
+C = TypeVar("C", bound=base.ResearchContext[Any], infer_variance=True)
 
 
-class ExecutionAlgo(BaseExecutionAlgo[ExecutionParams, C], Generic[C]):
+class ExecutionAlgo(base.ExecutionAlgo[ExecutionParams, C], Generic[C]):
     """初始实现不拆单，在可交易快照提交订单；可在此实现拆单逻辑。"""
 
     def can_execute(self) -> bool:

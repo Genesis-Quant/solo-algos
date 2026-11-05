@@ -2,17 +2,15 @@ from datetime import date, timedelta
 from typing import ClassVar
 
 import pandas as pd
-from scheme import DosVar
-from scheme import Factor as BaseFactor
-from scheme.data import query
-from scheme.data.dolphindb.universe import MEMBERS
+from scheme import base
+from scheme.data import MEMBERS, DosVar, create_session, query
 
 from .params import FactorParams
 
 __all__ = ["Factor"]
 
 
-class Factor(BaseFactor[FactorParams]):
+class Factor(base.Factor[FactorParams]):
     """计算近 5 周周收益波动率，在当日有效股票中做截面分位排名，再按行业和流通市值预处理。"""
 
     columns: ClassVar[list[str]] = ["volatility"]
@@ -158,23 +156,26 @@ class Factor(BaseFactor[FactorParams]):
             "is_friday": is_friday,
             "volatility": volatility,
         }
-        codes = universe.codes(start, end + timedelta(days=1))
-        if not codes:
-            raise ValueError("所选区间的股票池没有成员")
-        with query(
-            {
-                "start_date": start.isoformat(),
-                "end_date": end.isoformat(),
-                # 日历天数，覆盖 6 个交易周五和最多 8 个交易日的沿用，节假日周也足够。
-                "lookback": timedelta(days=110),
-                # 为下一交易日筛选读取有界未来数据，结果和日历仍截回 [start, end]。
-                # 20 个自然日内无下一交易日或下一日缺数据时 valid 为 false，不跳过停牌。
-                "lookforward": timedelta(days=20),
-                "codes": codes,
-                "derivatives": derivatives,
-                # 输出只保留 valid 行；filters 在全部派生列计算完成后才删行，不影响 TS 历史序列。
-                "filters": ["valid"],
-            }
-        ) as result:
-            # 使用默认的因子预处理，不需要自行实现去极值、标准化、中性化。
-            return self.preprocess(DosVar(result.data_ref), session=result.session)
+        with create_session() as session:
+            query.initialize_query(session)
+            codes = universe.codes(start, end + timedelta(days=1), session=session)
+            if not codes:
+                raise ValueError("所选区间的股票池没有成员")
+            with query.execute_query(
+                {
+                    "start_date": start.isoformat(),
+                    "end_date": end.isoformat(),
+                    # 日历天数，覆盖 6 个交易周五和最多 8 个交易日的沿用，节假日周也足够。
+                    "lookback": timedelta(days=110),
+                    # 为下一交易日筛选读取有界未来数据，结果和日历仍截回 [start, end]。
+                    # 20 个自然日内无下一交易日或下一日缺数据时 valid 为 false，不跳过停牌。
+                    "lookforward": timedelta(days=20),
+                    "codes": codes,
+                    "derivatives": derivatives,
+                    # 输出只保留 valid 行；filters 在全部派生列计算完成后才删行，不影响 TS 历史序列。
+                    "filters": ["valid"],
+                },
+                session=session,
+            ) as result:
+                # 使用默认的因子预处理，不需要自行实现去极值、标准化、中性化。
+                return self.preprocess(DosVar(result.data_ref), session=session)

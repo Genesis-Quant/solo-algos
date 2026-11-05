@@ -3,19 +3,19 @@ from datetime import timedelta
 from typing import Any, Generic, TypeVar
 
 import pandas as pd
-from scheme import DosVar, OrderReport, ResearchContext, TradeReport
-from scheme import ModelAlgo as BaseModelAlgo
-from scheme.data import query
+from scheme import base
+from scheme.data import DosVar, query
 from scheme.data.dolphindb.symbols import source_symbol
+from scheme.execute import OrderReport, TradeReport
 
 from .params import ModelParams
 
 __all__ = ["ModelAlgo"]
 
-C = TypeVar("C", bound=ResearchContext[Any], infer_variance=True)
+C = TypeVar("C", bound=base.ResearchContext[Any], infer_variance=True)
 
 
-class ModelAlgo(BaseModelAlgo[ModelParams, C], Generic[C]):
+class ModelAlgo(base.ModelAlgo[ModelParams, C], Generic[C]):
     """收盘后选择股票池内近 20 个交易日收益最高的股票。"""
 
     def initialize(self) -> None:
@@ -31,13 +31,15 @@ class ModelAlgo(BaseModelAlgo[ModelParams, C], Generic[C]):
             # Arena 查询的空 codes 表示全市场；股票池当天没有成员（如指数发布前）时不选股。
             self.ctx.signal = {}
         else:
-            with query(
+            with query.execute_query(
                 {
                     "start_date": (now.date() - timedelta(days=60)).isoformat(),
                     "end_date": now.date().isoformat(),
                     "codes": [source_symbol(code) for code in codes],
                     "factors": ["close", "adj_factor"],
-                }
+                },
+                session=self.backtest.session,
+                settings=self.backtest.settings,
             ) as result:
                 data = result.data
             adjusted = data.assign(price=data.close * data.adj_factor)
