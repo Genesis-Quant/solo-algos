@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from datetime import timedelta
+from datetime import date, timedelta
 from typing import Any, Generic, TypeVar
 
 import pandas as pd
@@ -17,6 +17,10 @@ C = TypeVar("C", bound=base.ResearchContext[Any], infer_variance=True)
 
 class ModelAlgo(base.ModelAlgo[ModelParams, C], Generic[C]):
     """收盘后选择股票池内近 20 个交易日收益最高的股票。"""
+
+    def __init__(self, params: ModelParams) -> None:
+        super().__init__(params)
+        self.last_rebalance: date | None = None
 
     def initialize(self) -> None:
         self.last_rebalance = None
